@@ -1,0 +1,42 @@
+name: Validate CV PDFs
+
+on:
+  push:
+    paths:
+      - 'cv/**'
+      - '.github/workflows/validate-cv-pdfs.yml'
+  pull_request:
+    paths:
+      - 'cv/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required PDF files
+        run: |
+          set -e
+          missing=0
+          for f in Experience_en Project_en; do
+            path="cv/pdf/${f}.pdf"
+            if [ ! -f "$path" ]; then
+              echo "::warning file=$path::Missing $path — compile from ${f}.tex (see cv/README.md)"
+              missing=$((missing + 1))
+            else
+              echo "✓ Found $path"
+            fi
+          done
+          if [ "$missing" -eq 2 ]; then
+            echo "::notice::No CV PDFs committed yet. Compile locally and add files to cv/pdf/."
+          elif [ "$missing" -gt 0 ]; then
+            echo "::notice::$missing of 2 required CV PDFs missing."
+          else
+            echo "All required CV PDFs present."
+          fi
+
+      - name: Verify viewer page exists
+        run: test -f cv/index.html

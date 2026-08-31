@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CV / Resume — Luu Minh Nhieu — Full-Stack Software Engineer">
+  <title>Luu Minh Nhieu · CV Viewer</title>
+  <style>
+    :root {
+      --gradient-start: #667eea;
+      --gradient-end: #764ba2;
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --radius: 14px;
+      --frame-height: min(78vh, 920px);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f0f2f5;
+        --surface: #ffffff;
+        --surface-hover: #f6f8fa;
+        --border: #d0d7de;
+        --text: #1f2328;
+        --text-muted: #656d76;
+        --shadow: 0 8px 28px rgba(102, 126, 234, 0.15);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+      padding: 2rem 1.25rem 2.75rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 85%, rgba(255,255,255,0.1) 0%, transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(255,255,255,0.07) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .hero-inner { position: relative; max-width: 1100px; margin: 0 auto; }
+
+    .hero h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .hero .subtitle {
+      margin-top: 0.35rem;
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .hero-links a {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4rem 0.85rem;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.8rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .hero-links a:hover {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateY(-1px);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: -1.25rem auto 2.5rem;
+      padding: 0 1rem;
+      position: relative;
+    }
+
+    .viewer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-hover);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      flex: 1;
+    }
+
+    .tab {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab:hover { border-color: var(--gradient-start); color: var(--text); }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .tab-select-wrap { display: none; flex: 1; min-width: 180px; }
+
+    .tab-select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover { opacity: 0.92; transform: translateY(-1px); }
+
+    .frame-wrap {
+      position: relative;
+      padding: 1rem;
+      background:
+        linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.06)),
+        var(--bg);
+    }
+
+    .pdf-frame {
+      position: relative;
+      height: var(--frame-height);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) border-box;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .pdf-frame iframe,
+    .pdf-frame embed,
+    .pdf-frame object {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    .fallback {
+      display: none;
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background: var(--surface);
+      color: var(--text-muted);
+      gap: 0.75rem;
+    }
+
+    .fallback.visible { display: flex; }
+
+    .fallback strong { color: var(--text); font-size: 1.05rem; }
+
+    .fallback code {
+      background: rgba(102, 126, 234, 0.12);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: var(--gradient-start);
+    }
+
+    .meta {
+      padding: 0.85rem 1rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .meta strong { color: var(--text); }
+
+    footer {
+      text-align: center;
+      padding: 0 1rem 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer a { color: var(--gradient-start); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 720px) {
+      .tabs { display: none; }
+      .tab-select-wrap { display: block; }
+      :root { --frame-height: 70vh; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-actions { justify-content: stretch; }
+      .toolbar-actions .btn { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Luu Minh Nhieu · CV Viewer</h1>
+      <p class="subtitle">Lưu Minh Nhiều — Full-Stack Software Engineer</p>
+      <nav class="hero-links" aria-label="Contact links">
+        <a href="https://github.com/So-Much" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/nhi%E1%BB%81u-minh-135541368/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:minhnhieu50@gmail.com">Email</a>
+        <a href="https://github.com/So-Much/So-Much" target="_blank" rel="noopener">Profile README</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="viewer-card" aria-label="CV PDF viewer">
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="CV variants">
+          <button class="tab active" role="tab" aria-selected="true" data-id="experience-en">Experience · EN</button>
+          <button class="tab" role="tab" aria-selected="false" data-id="project-en">Project · EN</button>
+        </div>
+        <div class="tab-select-wrap">
+          <label for="cv-select" class="visually-hidden">Select CV version</label>
+          <select id="cv-select" class="tab-select" aria-label="Select CV version">
+            <option value="experience-en">Experience · EN</option>
+            <option value="project-en">Project · EN</option>
+          </select>
+        </div>
+        <div class="toolbar-actions">
+          <a id="open-btn" class="btn btn-secondary" href="./pdf/Experience_en.pdf" target="_blank" rel="noopener">Open in tab</a>
+          <a id="download-btn" class="btn btn-primary" href="./pdf/Experience_en.pdf" download="Luu_Minh_Nhieu_Experience_EN.pdf">Download</a>
+        </div>
+      </div>
+
+      <div class="frame-wrap">
+        <div class="pdf-frame">
+          <iframe id="pdf-viewer" title="CV PDF viewer" src="./pdf/Experience_en.pdf#view=FitH"></iframe>
+          <div id="fallback" class="fallback" role="alert">
+            <strong>PDF not found</strong>
+            <p>Compile your <code>.tex</code> file and place the PDF in <code>cv/pdf/</code>.</p>
+            <p>Expected: <code id="expected-file">Experience_en.pdf</code></p>
+            <a id="fallback-link" class="btn btn-primary" href="https://github.com/So-Much/So-Much/blob/main/cv/README.md" target="_blank" rel="noopener">Setup guide</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="meta" id="meta-desc">
+        <strong>Experience-first · English</strong> — Skills → Work experience → Projects → Education.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Luu Minh Nhieu · <a href="https://github.com/So-Much">@So-Much</a> · Ho Chi Minh City, Vietnam</p>
+  </footer>
+
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+
+  <script>
+    const CV_VARIANTS = {
+      "experience-en": {
+        file: "Experience_en.pdf",
+        download: "Luu_Minh_Nhieu_Experience_EN.pdf",
+        meta: "<strong>Experience-first · English</strong> — Skills → Work experience → Projects → Education."
+      },
+      "project-en": {
+        file: "Project_en.pdf",
+        download: "Luu_Minh_Nhieu_Project_EN.pdf",
+        meta: "<strong>Project-first · English</strong> — Skills → Projects (detailed) → Experience → Education."
+      }
+    };
+
+    const iframe = document.getElementById("pdf-viewer");
+    const fallback = document.getElementById("fallback");
+    const expectedFile = document.getElementById("expected-file");
+    const metaDesc = document.getElementById("meta-desc");
+    const openBtn = document.getElementById("open-btn");
+    const downloadBtn = document.getElementById("download-btn");
+    const select = document.getElementById("cv-select");
+    const tabs = document.querySelectorAll(".tab");
+
+    let currentId = "experience-en";
+
+    function pdfUrl(file) {
+      return "./pdf/" + file + "#view=FitH";
+    }
+
+    async function pdfExists(file) {
+      try {
+        const res = await fetch("./pdf/" + file, { method: "HEAD" });
+        return res.ok;
+      } catch {
+        return false;
+      }
+    }
+
+    async function loadVariant(id, updateHash = true) {
+      const variant = CV_VARIANTS[id];
+      if (!variant) return;
+
+      if (updateHash) {
+        history.replaceState(null, "", "#" + id);
+      }
+
+      currentId = id;
+      const url = pdfUrl(variant.file);
+
+      tabs.forEach((tab) => {
+        const active = tab.dataset.id === id;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      select.value = id;
+
+      openBtn.href = "./pdf/" + variant.file;
+      downloadBtn.href = "./pdf/" + variant.file;
+      downloadBtn.download = variant.download;
+      metaDesc.innerHTML = variant.meta;
+      expectedFile.textContent = variant.file;
+
+      fallback.classList.remove("visible");
+      iframe.style.visibility = "visible";
+
+      const exists = await pdfExists(variant.file);
+      if (!exists) {
+        fallback.classList.add("visible");
+        iframe.style.visibility = "hidden";
+        iframe.removeAttribute("src");
+        return;
+      }
+
+      iframe.src = url;
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => loadVariant(tab.dataset.id));
+    });
+
+    select.addEventListener("change", () => loadVariant(select.value));
+
+    const hash = location.hash.replace("#", "");
+    if (CV_VARIANTS[hash]) {
+      loadVariant(hash);
+    } else {
+      loadVariant("experience-en");
+    }
+
+    window.addEventListener("hashchange", () => {
+      const id = location.hash.replace("#", "");
+      if (CV_VARIANTS[id]) loadVariant(id, false);
+    });
+  </script>
+</body>
+</html>

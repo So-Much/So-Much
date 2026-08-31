@@ -46,6 +46,35 @@ const nhieu = {
 
 ---
 
+## 📄 Resume / CV
+
+> GitHub profile README **cannot** embed PDF viewers — `<iframe>` and `<embed>` are stripped. Use **View online** (GitHub Pages) or **Download** links below.
+
+<div align="center">
+
+<a href="https://so-much.github.io/So-Much/cv/">
+  <img src="cv/preview/cv-preview.svg" width="280" alt="CV preview — document frame placeholder"/>
+</a>
+
+<br/><br/>
+
+[![View online](https://img.shields.io/badge/View_online_(framed_PDF)-667eea?style=for-the-badge&logo=readthedocs&logoColor=white)](https://so-much.github.io/So-Much/cv/)
+[![GitHub](https://img.shields.io/badge/CV_folder-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/So-Much/So-Much/tree/main/cv)
+
+<br/><br/>
+
+[![Experience EN](https://img.shields.io/badge/Download-Experience_EN-667eea?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://github.com/So-Much/So-Much/raw/main/cv/pdf/Experience_en.pdf)
+[![Project EN](https://img.shields.io/badge/Download-Project_EN-764ba2?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](https://github.com/So-Much/So-Much/raw/main/cv/pdf/Project_en.pdf)
+
+</div>
+
+| Variant | Focus | View online | Download |
+|---------|-------|-------------|----------|
+| **Experience · EN** | Work-first | [Open viewer](https://so-much.github.io/So-Much/cv/#experience-en) | [PDF](https://github.com/So-Much/So-Much/raw/main/cv/pdf/Experience_en.pdf) |
+| **Project · EN** | Portfolio-first | [Open viewer](https://so-much.github.io/So-Much/cv/#project-en) | [PDF](https://github.com/So-Much/So-Much/raw/main/cv/pdf/Project_en.pdf) |
+
+---
+
 ## 📊 GitHub Stats
 
 <div align="center">
